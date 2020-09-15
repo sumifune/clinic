@@ -1,0 +1,3 @@
+docker run -d -it --rm -p 8080:80 --name web2 --mount type=bind,source=${PWD},target=/usr/share/nginx/html nginx:mainline-alpine
+
+docker exec -it web2 sh or bash
