@@ -8,6 +8,24 @@ mongoose.Promise = global.Promise;
 const db = {};
 db.mongoose = mongoose;
 db.url = dbConfig.url;
-db.tutorials = require("./tutorial.model.js")(mongoose, mongoosePaginate);
+db.patients = require("./patient.model.js")(mongoose, mongoosePaginate);
+db.appointments = require("./appointment.model.js")(mongoose, mongoosePaginate);
+db.invoices = require("./invoice.model.js")(mongoose, mongoosePaginate);
+db.observations = require("./observation.model.js")(mongoose, mongoosePaginate);
+db.services = require("./service.model.js")(mongoose, mongoosePaginate);
+
+
+
+// let exp = require("./total.model.js")(mongoose, mongoosePaginate);
+
+
+// console.log(exp);
+
+// console.log(exp.Patient);
+
+
+// db.patients = exp.Patient;
+// db.appointments = exp.Appointment;
+
 
 module.exports = db;
