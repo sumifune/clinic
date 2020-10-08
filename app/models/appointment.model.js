@@ -3,13 +3,15 @@ module.exports = (mongoose, mongoosePaginate) => {
 
   var schema = mongoose.Schema(
   {
-    surname: String,
     madeBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Patient' // Reference to some PatientSchema
     },
     date: Date,
-    estate: String,
+    estate: {
+      type: String,
+      default: 'pending'
+    },
     hour: String,
     service: String
  },
