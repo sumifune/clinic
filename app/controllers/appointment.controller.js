@@ -40,7 +40,6 @@ exports.create = (req, res) => {
   // Create a Appointment
   const appointment = new Appointment({
     date: mongoDate,
-    estate: req.body.estate,
     hour: req.body.hour,
     service: req.body.service,
     madeBy: req.body.madeBy
