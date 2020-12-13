@@ -9,6 +9,12 @@ module.exports = app => {
   // Retrieve all invoices
   router.get("/", invoices.findAll);
 
+  // Generate Excel
+  router.get("/genexcel", invoices.generateExcel);
+
+  router.get("/downloadexcel", invoices.downloadExcel);
+
+
   // Retrieve all scheduled invoices on a date
   // router.get("/scheduled", invoices.findAllByDate);
 
