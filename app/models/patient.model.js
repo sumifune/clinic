@@ -9,7 +9,11 @@ module.exports = (mongoose, mongoosePaginate) => {
       phone: String,
       email: String,
       description: String,
-      active: Boolean,
+      signature: String,
+      active: {
+        type: Boolean,
+        default: true
+      },
       observations: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Observation'

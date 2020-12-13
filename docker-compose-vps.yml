@@ -78,7 +78,8 @@ volumes:
       type: none
       # full path. Cannot make it work using a relative path. Do not use ${PWD}
       # device: /${PWD}/public
-      device: /home/hiro/client-clinic
+      # device: /home/hiro/client-clinic
+      device: /home/hiro/actions-runner/cotomo-react-app/cotomo-front/cotomo-front/build
       o: bind
   # dhparam:
   #   driver: local

@@ -37,6 +37,10 @@ exports.create = (req, res) => {
     res.status(400).send({ message: "Phone can not be empty!" });
     return;
   }
+  if (!req.body.signature) {
+    res.status(400).send({ message: "Signature can not be empty!" });
+    return;
+  }
   // Create a Patient
   const patient = new Patient({
     name: req.body.name,
@@ -47,7 +51,8 @@ exports.create = (req, res) => {
     phone: req.body.phone,
     email: req.body.email,
     description: req.body.description,
-    active: req.body.active ? req.body.active : false
+    active: req.body.active ? req.body.active : false,
+    signature: req.body.signature
   });
 
   // Save Patient in the database
@@ -96,6 +101,7 @@ exports.findOne = (req, res) => {
 
   Patient.findById(id)
   .then(data => {
+    // console.log(data);
     if (!data)
       res.status(404).send({ message: "Not found patient with id " + id });
     else res.send(data);

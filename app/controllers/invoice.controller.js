@@ -6,6 +6,7 @@ const Invoice = db.invoices;
 const Patient = db.patients;
 const Service = db.services;
 
+const expexcel = require('../libs/expexcel');
 
 
 const getPagination = (page, size) => {
@@ -188,8 +189,12 @@ exports.createTrans = (req, res) => {
 
             // console.log("ivaBaseSum " + ivaBaseSum);
             // console.log("total " + total);
-            if (ivaBaseSum !== total)
-              console.log('Fiscal check failed ');
+            if (ivaBaseSum !== total) {
+              console.log('Fiscal check failed------------------------------------- ');
+              console.log('total ' + total);
+              console.log('ivaBaseSum ' + ivaBaseSum);
+              console.log('---------------------------------------------------------');
+            }
 
 		        // Create a invoice
 		        const newInvoice = new Invoice({
@@ -245,8 +250,69 @@ exports.createTrans = (req, res) => {
 
 };
 
+exports.downloadExcel = (req, res) => {
+// router.get('/:id/download', function (req, res, next) {
+    var filePath = "./exports/Acupuntura.xlsx"; // Or format the path using the `id` rest param
+    var fileName = "Acupuntura.xlsx"; // The default name the browser will use
+    console.log('fsfsfsfsdfsf');
+    res.download(filePath, fileName);
+// });
+    console.log('No deberia dde llegar hasta aqui');
+
+};
+
+// Retrieve all invoices from the database.
+exports.generateExcel = (req, res) => {
+  const { page, size, surname, date1, date2 } = req.query;
+
+  let momentDate1 = moment(date1, "DD-MM-YYYY");
+  let momentDate2 = moment(date2, "DD-MM-YYYY");
+
+  let mongoDate1 = moment(momentDate1).format('YYYY-MM-DD');
+  let mongoDate2 = moment(momentDate2).format('YYYY-MM-DD');
 
 
+  let qdate1 = moment(mongoDate1).add(0,'days');
+  let qdate2 = moment(mongoDate2).add(0,'days');
+
+
+  let dateCondition = (date1 && date2) ? {
+      createdAt: {
+        $gte: qdate1.startOf('day').toDate(),
+        $lte: qdate2.endOf('day').toDate()
+      }
+    } : {};
+
+
+  let surnameCondition = surname ? { surname: { $regex: new RegExp(surname), $options: "i" } } : {};
+
+  let condition = {...dateCondition, ...surnameCondition};
+
+  // const { limit, offset } = getPagination(page, size);
+  // const populate = { populate: 'emittedTo', lean: true, sort: { 'createdAt': 1 } };
+
+  console.log('ppppppppppppppppppppppppppppppppppppppppppppppppppppppp')
+  console.log(condition);
+  console.log('ppppppppppppppppppppppppppppppppppppppppppppppppppppppp')
+
+
+  Invoice.paginate(condition, { pagination: false }, function(err, invs) {
+
+    console.log("---------------------------------------------");
+    console.log(invs);
+    console.log("---------------------------------------------");
+
+    expexcel.createExcel(invs)
+      .then((data) => {
+        res.send({ estate: true });
+      })
+      .catch((err) => {
+        res.status(500).send({ estate: false });
+    });
+
+  });
+
+};
 
 // Retrieve all invoices from the database.
 exports.findAll = (req, res) => {
@@ -254,9 +320,6 @@ exports.findAll = (req, res) => {
   // var condition = surname
   // ? { surname: { $regex: new RegExp(surname), $options: "i" } }
   // : {};
-
-
-
 
   console.log(surname);
   console.log(date1);
@@ -295,22 +358,54 @@ exports.findAll = (req, res) => {
 
   // console.log({ offset, limit, ...populate });
 
-  Invoice.paginate(condition, { offset, limit, ...populate })
-  .then((data) => {
-    console.log(data);
-    res.send({
-      totalItems: data.totalDocs,
-      invoices: data.docs,
-      totalPages: data.totalPages,
-      currentPage: data.page - 1,
+  function amount(item){
+
+    if (item.estate === "emitted")
+      return item.total;
+    else
+      return 0;
+  }
+
+  function sum(prev, next){
+    return prev + next;
+  }
+
+
+
+  Invoice.paginate(condition, { pagination: false }, function(err, invs) {
+
+    console.log("---------------------------------------------");
+    console.log(invs);
+    console.log("---------------------------------------------");
+
+
+    let totalInvoices = invs.docs.map(amount).reduce(sum);
+    // console.log(invs.docs.map(amount).reduce(sum));
+    let numberInvoices = invs.docs.filter((item) => item.estate === "emitted").length;
+    let numCanInvoices = invs.docs.filter((item) => item.estate === "cancelled").length;
+
+    Invoice.paginate(condition, { offset, limit, ...populate })
+    .then((data) => {
+      // console.log(data);
+      res.send({
+        totalItems: data.totalDocs,
+        invoices: data.docs,
+        totalPages: data.totalPages,
+        currentPage: data.page - 1,
+        totalInvoices: totalInvoices,
+        numberInvoices: numberInvoices,
+        numCanInvoices: numCanInvoices,
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+        err.message || "Some error occurred while retrieving invoices.",
+      });
     });
-  })
-  .catch((err) => {
-    res.status(500).send({
-      message:
-      err.message || "Some error occurred while retrieving invoices.",
-    });
+
   });
+
 };
 
 // Retrieve all invoices by date from the database.
