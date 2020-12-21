@@ -9,6 +9,9 @@ module.exports = app => {
   // Retrieve all services
   router.get("/", services.findAll);
 
+  // Retrieve all services
+  router.get("/area/", services.findAllActivity);
+
   // Retrieve a single service with id
   router.get("/:id", services.findOne);
 

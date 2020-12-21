@@ -14,6 +14,15 @@ module.exports = (mongoose, mongoosePaginate) => {
         type: Boolean,
         default: true
       },
+      tutor1: String,
+      tutor2: String,
+      niftutor1: String,
+      niftutor2: String,
+      pddate: Date,
+      pdok: {
+        type: Boolean,
+        default: false
+      },
       observations: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Observation'

@@ -20,10 +20,17 @@ exports.create = (req, res) => {
     return;
   }
 
+  if (!req.body.activity) {
+    res.status(400).send({ message: "Activity can not be empty!" });
+    return;
+  }
+  console.log('...............................................');
+  console.log(req.body);
   const service = new Service({
     name: req.body.name,
     iva: req.body.iva,
-    cost: req.body.cost
+    cost: req.body.cost,
+    activity: req.body.activity,
   });
 
   service
@@ -49,6 +56,42 @@ exports.findAll = (req, res) => {
 
   // Service.paginate(condition, { offset, limit })
   Service.find({})
+  .then((data) => {
+    res.send({data});
+  })
+  .catch((err) => {
+    res.status(500).send({
+      message:
+      err.message || "Some error occurred while retrieving services.",
+    });
+  });
+};
+
+exports.findAllActivity = (req, res) => {
+  // const { page, size, name } = req.query;
+  // var condition = name
+  // ? { name: { $regex: new RegExp(name), $options: "i" } }
+  // : {};
+
+  // const { limit, offset } = getPagination(page, size);
+
+  // Service.paginate(condition, { offset, limit })
+
+
+  console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+  console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+  console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+  console.log(req.query.activity);
+  console.log(req.query);
+  console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+  console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+  console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+  console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+
+
+  const activity = req.query.activity;
+
+  Service.find({ activity: activity })
   .then((data) => {
     res.send({data});
   })
