@@ -11,6 +11,7 @@ db.url = dbConfig.url;
 db.patients = require("./patient.model.js")(mongoose, mongoosePaginate);
 db.appointments = require("./appointment.model.js")(mongoose, mongoosePaginate);
 db.invoices = require("./invoice.model.js")(mongoose, mongoosePaginate);
+db.invoicesPsicologia = require("./invoicePsicologia.model.js")(mongoose, mongoosePaginate);
 db.observations = require("./observation.model.js")(mongoose, mongoosePaginate);
 db.services = require("./service.model.js")(mongoose, mongoosePaginate);
 

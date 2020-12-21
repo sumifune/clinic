@@ -14,8 +14,6 @@ const createExcel = (dd) => {
 	  {header: 'Ciudad', key: 'city'},
 	  {header: 'Concepto', key: 'concept'}, // 7
 	  {header: 'Sesiones', key: 'sessions'}, // 8
-	  {header: 'IVA', key: 'iva'},
-	  {header: 'Base', key: 'base'},
 	  {header: 'Total', key: 'total'},
 	  {header: 'Estado', key: 'estate'}
 	];
@@ -35,11 +33,9 @@ const createExcel = (dd) => {
 	  // row 1 is the header.
 	  const rowIndex = index + 2
 
-	  let {name, surname, dni, address, city, iva, base, total, inumber, concept, sessions, createdAt, estate} = e;
+	  let {name, surname, dni, address, city, total, inumber, concept, sessions, createdAt, estate} = e;
 
 	  let ddd = new Date(createdAt);
-
-	  iva = parseInt(iva) / 100;
 
 	  let number = inumber + "/" + ddd.getFullYear();
 
@@ -54,11 +50,9 @@ const createExcel = (dd) => {
 	    city,
 	    concept,
 	    sessions,
-	    iva,
-	    base,
 	    total,
 	    estate
-	  })
+	  });
 
 	  if (estate === 'Cancelada') {
 	    // row.fill = {
@@ -86,28 +80,8 @@ const createExcel = (dd) => {
 
 	const totalNumberOfRows = worksheet.rowCount
 
-	// // Add the total Rows
-	// worksheet.addRow([
-	//   '',
-	//   '',
-	//   '',
-	//   '',
-	//   '',
-	//   '',
-	//   '',
-	//   '',
-	//   '',
-	//   'Total',
-	//   {
-	//     formula: `=sum(K2:K${totalNumberOfRows})`
-	//   },
-	//   ''
-	// ]);
-
-		// Add the total Rows
+	// Add the total Rows
 	worksheet.addRow([
-	  '',
-	  '',
 	  '',
 	  '',
 	  '',
@@ -117,24 +91,20 @@ const createExcel = (dd) => {
 	  '',
 	  'Total',
 	  {
-	    formula: `=sumif(L2:L${totalNumberOfRows}, "", K2:K${totalNumberOfRows})`
+	    formula: `=sumif(J2:J${totalNumberOfRows}, "", I2:I${totalNumberOfRows})`
 	  },
 	  ''
 	]);
 
-
-
-
-
 	// Set the way columns J - K are formatted
-	const figureColumns = [10, 11]
+	const figureColumns = [9]
 	figureColumns.forEach((i) => {
 	  worksheet.getColumn(i).numFmt = '€0.00'
 	  worksheet.getColumn(i).alignment = {horizontal: 'center'}
 	})
 
 	// Column F needs to be formatted as a percentage.
-	worksheet.getColumn(9).numFmt = '0.00%';
+	// worksheet.getColumn(9).numFmt = '0.00%';
 
 	// loop through all of the rows and set the outline style.
 	worksheet.eachRow({ includeEmpty: false }, function (row, rowNumber) {
@@ -145,7 +115,7 @@ const createExcel = (dd) => {
 	    right: {style: 'none'}
 	  }
 
-	  const insideColumns = ['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K']
+	  const insideColumns = ['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
 
 	  insideColumns.forEach((v) => {
 	    worksheet.getCell(`${v}${rowNumber}`).border = {
@@ -156,7 +126,7 @@ const createExcel = (dd) => {
 	    }
 	  })
 
-	  worksheet.getCell(`L${rowNumber}`).border = {
+	  worksheet.getCell(`J${rowNumber}`).border = {
 	    top: {style: 'thin'},
 	    left: {style: 'none'},
 	    bottom: {style: 'thin'},
@@ -164,7 +134,7 @@ const createExcel = (dd) => {
 	  }
 	})
 
-	const totalCell = worksheet.getCell(`J${worksheet.rowCount}`)
+	const totalCell = worksheet.getCell(`H${worksheet.rowCount}`)
 	totalCell.font = {bold: true}
 	totalCell.alignment = {horizontal: 'center'}
 
@@ -173,7 +143,14 @@ const createExcel = (dd) => {
 	  { state: 'frozen', xSplit: 0, ySplit: 1, activeCell: 'B2' }
 	]
 
-	return workbook.xlsx.writeFile('./exports/Acupuntura.xlsx');
+
+	// worksheet.getRow(1).fill = {
+	// 	type: 'pattern',
+	// 	pattern:'solid',
+	// 	fgColor:{ argb:'cccccc' }
+	// }
+
+	return workbook.xlsx.writeFile('./exports/Psicologia.xlsx');
 
 }
 

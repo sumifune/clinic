@@ -3,7 +3,8 @@ module.exports = (mongoose, mongoosePaginate) => {
     {
       name: String,
       iva: Number,
-      cost: Number
+      cost: Number,
+      activity: String
     },
     { timestamps: true }
   );

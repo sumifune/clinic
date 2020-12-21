@@ -21,38 +21,38 @@ exports.create = (req, res) => {
     res.status(400).send({ message: "Surname can not be empty!" });
     return;
   }
-  if (!req.body.address) {
-    res.status(400).send({ message: "Address can not be empty!" });
-    return;
-  }
-  if (!req.body.city) {
-    res.status(400).send({ message: "City can not be empty!" });
-    return;
-  }
-  if (!req.body.dni) {
-    res.status(400).send({ message: "DNI can not be empty!" });
-    return;
-  }
+  // if (!req.body.address) {
+  //   res.status(400).send({ message: "Address can not be empty!" });
+  //   return;
+  // }
+  // if (!req.body.city) {
+  //   res.status(400).send({ message: "City can not be empty!" });
+  //   return;
+  // }
+  // if (!req.body.dni) {
+  //   res.status(400).send({ message: "DNI can not be empty!" });
+  //   return;
+  // }
   if (!req.body.phone) {
     res.status(400).send({ message: "Phone can not be empty!" });
     return;
   }
-  if (!req.body.signature) {
-    res.status(400).send({ message: "Signature can not be empty!" });
-    return;
-  }
+  // if (!req.body.signature) {
+  //   res.status(400).send({ message: "Signature can not be empty!" });
+  //   return;
+  // }
   // Create a Patient
   const patient = new Patient({
     name: req.body.name,
     surname: req.body.surname,
-    address: req.body.address,
-    city: req.body.city,
-    dni: req.body.dni,
+    address: req.body.address || "",
+    city: req.body.city || "",
+    dni: req.body.dni || "",
     phone: req.body.phone,
-    email: req.body.email,
-    description: req.body.description,
-    active: req.body.active ? req.body.active : false,
-    signature: req.body.signature
+    email: req.body.email || "",
+    description: req.body.description || "",
+    // active: req.body.active ? req.body.active : false,
+    // signature: req.body.signature
   });
 
   // Save Patient in the database

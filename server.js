@@ -77,6 +77,7 @@ app.get("/", (req, res) => {
 require("./app/routes/patient.routes")(app);
 require("./app/routes/appointment.routes")(app);
 require("./app/routes/invoice.routes")(app);
+require("./app/routes/invoice.psicologia.routes")(app);
 require("./app/routes/service.routes")(app);
 
 

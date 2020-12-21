@@ -2,11 +2,12 @@ const db = require("../models");
 const moment = require('moment');
 
 // const Patient = db.patients;
-const Invoice = db.invoices;
+// const Invoice = db.invoices;
+const InvoicePsicologia = db.invoicesPsicologia;
 const Patient = db.patients;
 const Service = db.services;
 
-const expexcel = require('../libs/expexcel');
+const expexcel = require('../libs/expexcelpsicologia');
 
 
 const getPagination = (page, size) => {
@@ -63,7 +64,7 @@ exports.create = (req, res) => {
     return;
   }
   if (!req.body.inumber) {
-    res.status(400).send({ message: "Invoice number can not be empty!" });
+    res.status(400).send({ message: "InvoicePsicologia number can not be empty!" });
     return;
   }
 
@@ -75,7 +76,7 @@ exports.create = (req, res) => {
   // console.log(mongoDate);
 
   // Create a invoice
-  const invoice = new Invoice({
+  const invoice = new InvoicePsicologia({
     emittedTo: req.body.emittedTo,
     date: mongoDate,
     concept: req.body.concept,
@@ -89,7 +90,7 @@ exports.create = (req, res) => {
     inumber: req.body.inumber,
   });
 
-  // Save Invoice in the database
+  // Save InvoicePsicologia in the database
   invoice
   .save(invoice)
   .then(t => t.populate('emittedTo').execPopulate())
@@ -130,7 +131,7 @@ exports.createTrans = (req, res) => {
   // let qsdate = moment(req.body.date, "DD-MM-YYYY");
   // let mongoDate = moment(qsdate).format('YYYY-MM-DD');
 
-  Invoice.findOne({}).sort('-createdAt').exec(function(err, invoice){
+  InvoicePsicologia.findOne({}).sort('-createdAt').exec(function(err, invoice){
 
     // if (invoice)
     //   console.log(typeof moment(invoice.createdAt).format('YYYY'));
@@ -197,7 +198,7 @@ exports.createTrans = (req, res) => {
             }
 
 		        // Create a invoice
-		        const newInvoice = new Invoice({
+		        const newInvoicePsicologia = new InvoicePsicologia({
 		          emittedTo: req.body.emittedTo,
 		          serviceID: service.id,
 		          concept: service.name,
@@ -214,9 +215,9 @@ exports.createTrans = (req, res) => {
 		          inumber: nextInumber,
 		        });
 
-		        // Save Invoice in the database
-		        newInvoice
-		        .save(newInvoice)
+		        // Save InvoicePsicologia in the database
+		        newInvoicePsicologia
+		        .save(newInvoicePsicologia)
 		        .then(t => t.populate('emittedTo').execPopulate())
 		        .then(data => {
 		          res.send(data);
@@ -252,8 +253,8 @@ exports.createTrans = (req, res) => {
 
 exports.downloadExcel = (req, res) => {
 // router.get('/:id/download', function (req, res, next) {
-    var filePath = "./exports/Acupuntura.xlsx"; // Or format the path using the `id` rest param
-    var fileName = "Acupuntura.xlsx"; // The default name the browser will use
+    var filePath = "./exports/Psicologia.xlsx"; // Or format the path using the `id` rest param
+    var fileName = "Psicologia.xlsx"; // The default name the browser will use
     res.download(filePath, fileName);
 // });
     // console.log('No deberia dde llegar hasta aqui'); //... pero llega
@@ -290,7 +291,7 @@ exports.generateExcel = (req, res) => {
   // const { limit, offset } = getPagination(page, size);
   // const populate = { populate: 'emittedTo', lean: true, sort: { 'createdAt': 1 } };
 
-  Invoice.paginate(condition, { pagination: false }, function(err, invs) {
+  InvoicePsicologia.paginate(condition, { pagination: false }, function(err, invs) {
 
     expexcel.createExcel(invs)
       .then((data) => {
@@ -362,7 +363,7 @@ exports.findAll = (req, res) => {
 
 
 
-  Invoice.paginate(condition, { pagination: false }, function(err, invs) {
+  InvoicePsicologia.paginate(condition, { pagination: false }, function(err, invs) {
 
     let totalInvoices = 0;
     let numberInvoices = 0;
@@ -374,7 +375,7 @@ exports.findAll = (req, res) => {
       numCanInvoices = invs.docs.filter((item) => item.estate === "cancelled").length;
     }
 
-    Invoice.paginate(condition, { offset, limit, ...populate })
+    InvoicePsicologia.paginate(condition, { offset, limit, ...populate })
     .then((data) => {
       // console.log(data);
       res.send({
@@ -416,7 +417,7 @@ exports.findAllByDate = (req, res) => {
 
   // console.log(condition);
 
-  Invoice.find(condition)
+  InvoicePsicologia.find(condition)
   .populate('emittedTo')
   .then((data) => {
     // console.log(data);
@@ -437,7 +438,7 @@ exports.findAllByPatientId = (req, res) => {
   const id = req.params.id;
   const condition = { emittedTo: id };
 
-  Invoice.find(condition).populate('emittedTo')
+  InvoicePsicologia.find(condition).populate('emittedTo')
   .then((data) => {
     // console.log(data);
     res.send({
@@ -460,7 +461,7 @@ exports.findAllByPatientId = (req, res) => {
 //   let mongoDate = moment(momentDate).format('YYYY-MM-DD');
 
 //   const queryDB = (condition) => {
-//     const query = Invoice.find(condition).populate('emittedTo')
+//     const query = InvoicePsicologia.find(condition).populate('emittedTo')
 //     const promise = query.exec();
 //     return promise;
 //   }
@@ -493,7 +494,9 @@ exports.findAllByPatientId = (req, res) => {
 exports.findOne = (req, res) => {
   const id = req.params.id;
 
-  Invoice.findById(id)
+  // console.log('aadadadsd');
+
+  InvoicePsicologia.findById(id)
   .populate('emittedTo')
   .then(data => {
     if (!data)
@@ -507,7 +510,7 @@ exports.findOne = (req, res) => {
   });
 };
 
-// Update a Invoice by the id in the request
+// Update a InvoicePsicologia by the id in the request
 exports.update = (req, res) => {
   if (!req.body) {
     return res.status(400).send({
@@ -517,7 +520,7 @@ exports.update = (req, res) => {
 
   const id = req.params.id;
 
-  Invoice.findByIdAndUpdate(id, req.body, { new: true, useFindAndModify: false })
+  InvoicePsicologia.findByIdAndUpdate(id, req.body, { new: true, useFindAndModify: false })
   .populate('emittedTo')
   .then(data => {
     if (!data) {
@@ -526,7 +529,7 @@ exports.update = (req, res) => {
       });
     } else {
       res.send(data);
-      //res.send({ message: "Invoice was updated successfully." });
+      //res.send({ message: "InvoicePsicologia was updated successfully." });
     }
   })
   .catch(err => {
@@ -540,7 +543,7 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
   const id = req.params.id;
 
-  Invoice.findByIdAndRemove(id)
+  InvoicePsicologia.findByIdAndRemove(id)
   .then(data => {
     if (!data) {
       res.status(404).send({
@@ -548,7 +551,7 @@ exports.delete = (req, res) => {
       });
     } else {
       res.send({
-        message: "Invoice was deleted successfully!"
+        message: "InvoicePsicologia was deleted successfully!"
       });
     }
   })
@@ -561,10 +564,10 @@ exports.delete = (req, res) => {
 
 // Delete all invoice from the database.
 exports.deleteAll = (req, res) => {
-  Invoice.deleteMany({})
+  InvoicePsicologia.deleteMany({})
   .then(data => {
     res.send({
-      message: `${data.deletedCount} Invoices were deleted successfully!`
+      message: `${data.deletedCount} InvoicePsicologias were deleted successfully!`
     });
   })
   .catch(err => {
@@ -581,7 +584,7 @@ exports.deleteAll = (req, res) => {
 //   const { limit, offset } = getPagination(page, size);
 //   const populate = { populate: 'emittedTo', lean: true };
 
-//   Invoice.paginate({ estate: "emitted" }, { offset, limit, ...populate })
+//   InvoicePsicologia.paginate({ estate: "emitted" }, { offset, limit, ...populate })
 //   .then((data) => {
 //     res.send({
 //       totalItems: data.totalDocs,
