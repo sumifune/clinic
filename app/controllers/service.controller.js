@@ -10,12 +10,13 @@ const getPagination = (page, size) => {
 };
 
 exports.create = (req, res) => {
+
   // Validate request
   if (!req.body.name) {
     res.status(400).send({ message: "Name can not be empty!" });
     return;
   }
-  if (!req.body.iva) {
+  if ( (!req.body.iva && req.body.iva !==0 )|| (req.body.iva < 0) ) {
     res.status(400).send({ message: "IVA can not be empty!" });
     return;
   }
@@ -24,8 +25,6 @@ exports.create = (req, res) => {
     res.status(400).send({ message: "Activity can not be empty!" });
     return;
   }
-  console.log('...............................................');
-  console.log(req.body);
   const service = new Service({
     name: req.body.name,
     iva: req.body.iva,
@@ -76,18 +75,6 @@ exports.findAllActivity = (req, res) => {
   // const { limit, offset } = getPagination(page, size);
 
   // Service.paginate(condition, { offset, limit })
-
-
-  console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-  console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-  console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-  console.log(req.query.activity);
-  console.log(req.query);
-  console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-  console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-  console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-  console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-
 
   const activity = req.query.activity;
 

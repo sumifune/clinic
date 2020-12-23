@@ -1,5 +1,7 @@
+const { authJwt } = require("../middlewares");
+const appointments = require("../controllers/appointment.controller.js");
+
 module.exports = app => {
-  const appointments = require("../controllers/appointment.controller.js");
 
   var router = require("express").Router();
 
@@ -35,5 +37,13 @@ module.exports = app => {
   // Create a new Appointment
   router.delete("/", appointments.deleteAll);
 
-  app.use('/api/appointments', router);
+  app.use(function(req, res, next) {
+    res.header(
+      "Access-Control-Allow-Headers",
+      "x-access-token, Origin, Content-Type, Accept"
+    );
+    next();
+  });
+
+  app.use('/api/appointments',[authJwt.verifyToken, authJwt.isAdmin], router);
 };
