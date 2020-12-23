@@ -1,5 +1,7 @@
+const { authJwt } = require("../middlewares");
+const patients = require("../controllers/patient.controller.js");
+
 module.exports = app => {
-  const patients = require("../controllers/patient.controller.js");
 
   var router = require("express").Router();
 
@@ -33,5 +35,13 @@ module.exports = app => {
   // Create a new Patient
   router.delete("/", patients.deleteAll);
 
-  app.use('/api/patients', router);
+  app.use(function(req, res, next) {
+    res.header(
+      "Access-Control-Allow-Headers",
+      "x-access-token, Origin, Content-Type, Accept"
+    );
+    next();
+  });
+
+  app.use('/api/patients', [ authJwt.verifyToken, authJwt.isModeratorOrAdmin ], router);
 };

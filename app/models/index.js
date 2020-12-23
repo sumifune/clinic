@@ -15,6 +15,10 @@ db.invoicesPsicologia = require("./invoicePsicologia.model.js")(mongoose, mongoo
 db.observations = require("./observation.model.js")(mongoose, mongoosePaginate);
 db.services = require("./service.model.js")(mongoose, mongoosePaginate);
 
+db.user = require("./user.model");
+db.role = require("./role.model");
+
+db.ROLES = ["user", "admin", "moderator"];
 
 
 // let exp = require("./total.model.js")(mongoose, mongoosePaginate);
