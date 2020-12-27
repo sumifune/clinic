@@ -1,0 +1,99 @@
+version: '3'
+
+services:
+  main2:
+    build:
+      context: .
+      dockerfile: Dockerfile.main
+    volumes:
+      # Local app folder is mounted to the container
+      - .:/usr/src/app
+      # node_modules that are installed inside the container during
+      # the build will not be overridden by your current folder.
+      - /usr/src/app/node_modules
+    container_name: main2
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - MONGO_USERNAME=$MONGO_USERNAME
+      - MONGO_PASSWORD=$MONGO_PASSWORD
+      - MONGO_HOSTNAME=db2
+      - MONGO_PORT=$MONGO_PORT
+      - MONGO_DB=$MONGO_DB
+    # ports:
+    # - "3000:3000"
+    networks:
+      - app-network2
+    command: ["./wait-for.sh", "db2:27017", "--", "npm", "start" ]
+
+  db2:
+    image: mongo:4.1.8-xenial
+    container_name: db2
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=$MONGO_USERNAME
+      - MONGO_INITDB_ROOT_PASSWORD=$MONGO_PASSWORD
+    # ports:
+      # - "81:27017"
+    volumes:
+      - dbdata2:/data/db
+    networks:
+      - app-network2
+
+  webserver2:
+    build:
+      context: .
+      dockerfile: Dockerfile.webserver
+    container_name: webserver2
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    env_file: .env
+    environment:
+      - CRT=$CRT
+      - KEY=$KEY
+    volumes:
+      - ./certkey:/etc/ssl/private
+      - ./certkey:/etc/ssl/certs
+      - web-root2:/usr/share/nginx/html
+    depends_on:
+      - main2
+    networks:
+      - app-network2
+
+  # certbot:
+  #   image: certbot/certbot
+  #   container_name: certbot
+  #   volumes:
+  #     - certbot-etc:/etc/letsencrypt
+  #     - certbot-var:/var/lib/letsencrypt
+  #     - web-root2:/var/www/html
+  #   depends_on:
+  #     - webserver
+  #   command: certonly --webroot --webroot-path=/var/www/html --email sukia.mifune@gmail.com --agree-tos --no-eff-email --staging -d kurotombo.com  -d www.kurotombo.com
+
+volumes:
+  dbdata2:
+  # certbot-etc:
+  # certbot-var:
+  web-root2:
+    driver: local
+    driver_opts:
+      type: none
+      # full path. Cannot make it work using a relative path. Do not use ${PWD}
+      # device: /${PWD}/public
+      # device: /home/hiro/client-clinic
+      device: /home/hiro/actions-runner/cotomo-react-app/cotomo-front/cotomo-front/build
+      o: bind
+  # dhparam:
+  #   driver: local
+  #   driver_opts:
+  #     type: none
+  #     device: /c/Users/Nombre/docker/tutorials/zz/dhparam/
+  #     o: bind
+
+networks:
+  app-network2:
+    driver: bridge
