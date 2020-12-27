@@ -1,0 +1,27 @@
+# BASE
+FROM alpine
+# RUN
+RUN apk add --no-cache bash; \
+		apk add dos2unix; \
+    apk add nginx; \
+    mkdir /run/nginx/; \
+    mkdir /usr/share/nginx/html; \
+    echo "<h1>Hello world!</h1>" > /var/www/localhost/htdocs/index.html;
+# CONFIGUTATIONS
+# nginx configuration
+ADD ${PWD}/config/default.conf /etc/nginx/conf.d/default.conf
+# keys and certs
+ADD ${PWD}/config/*.key /etc/ssl/private/
+ADD ${PWD}/config/*.crt /etc/ssl/certs/
+# WORKDIR /var/www/localhost/htdocs
+WORKDIR /usr/share/nginx/html
+# ENTRYPOINT
+COPY ${PWD}/config/entrypoint.sh /usr/local/bin
+RUN chmod 777 /usr/local/bin/entrypoint.sh
+RUN dos2unix /usr/local/bin/entrypoint.sh
+ENTRYPOINT ["/bin/bash", "/usr/local/bin/entrypoint.sh"]
+# EXPOSE PORTS
+EXPOSE 80
+EXPOSE 443
+# RUN COMMAND
+CMD ["/bin/bash", "-c", "nginx -g 'daemon off;'; nginx -s reload;"]
