@@ -252,6 +252,7 @@ exports.createTrans = (req, res) => {
 
 exports.downloadExcel = (req, res) => {
 // router.get('/:id/download', function (req, res, next) {
+    // console.log('Download');
     var filePath = "./exports/Acupuntura.xlsx"; // Or format the path using the `id` rest param
     var fileName = "Acupuntura.xlsx"; // The default name the browser will use
     res.download(filePath, fileName);
@@ -262,6 +263,7 @@ exports.downloadExcel = (req, res) => {
 
 // Retrieve all invoices from the database.
 exports.generateExcel = (req, res) => {
+  // console.log('Generate');
   const { page, size, surname, date1, date2 } = req.query;
 
   let momentDate1 = moment(date1, "DD-MM-YYYY");

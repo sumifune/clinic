@@ -1,5 +1,5 @@
 exports.allAccess = (req, res) => {
-  res.status(200).send("Public Content.");
+  res.status(200).send("Centro Otomo");
 };
 
 exports.userBoard = (req, res) => {
